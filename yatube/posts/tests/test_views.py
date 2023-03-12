@@ -2,7 +2,7 @@ from django import forms
 from django.test import Client, TestCase
 from django.urls import reverse
 from django.core.files.uploadedfile import SimpleUploadedFile
-
+from django.core.cache import cache
 from ..models import Post, Group, User, Comment, Follow
 
 
@@ -190,6 +190,10 @@ class PostPagesTests(TestCase):
         response2 = self.guest_client.get(reverse("posts:index"))
         r_2 = response2.content
         self.assertEqual(r_1, r_2)
+        cache.clear()
+        self.assertNotEqual(r_2, self.guest_client.get(
+            reverse('posts:index')
+        ).content)
 
     def test_follow_page(self):
         # Проверяем, что страница подписок пуста

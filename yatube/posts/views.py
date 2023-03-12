@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import Post, Group, User, Comment, Follow
+from .models import Post, Group, User, Follow
 from .forms import PostForm, CommentForm
 from django.contrib.auth.decorators import login_required
 from posts.utils import get_page
@@ -7,7 +7,7 @@ from django.urls import reverse
 
 
 def index(request):
-    posts = Post.objects.order_by('-pub_date')
+    posts = Post.objects.all()
     page_obj = get_page(request, posts)
     context = {
         'page_obj': page_obj,
@@ -18,7 +18,7 @@ def index(request):
 def group_posts(request, slug):
     group = get_object_or_404(Group, slug=slug)
     template = 'posts/group_list.html'
-    posts = Post.objects.filter(group=group).order_by('-pub_date')
+    posts = group.posts.all()
     page_obj = get_page(request, posts)
     context = {
         'group': group,
@@ -30,8 +30,8 @@ def group_posts(request, slug):
 
 def profile(request, username):
     user = get_object_or_404(User, username=username)
-    posts = user.posts.order_by('-pub_date')
-    quantity = user.posts.all().count
+    posts = user.posts.all()
+    quantity = user.posts.count()
     page_obj = get_page(request, posts)
     following = user.following.exists()
     context = {
@@ -49,7 +49,7 @@ def post_detail(request, post_id):
     form = CommentForm(request.POST or None)
     post = get_object_or_404(
         Post.objects.select_related('author', 'group'), pk=post_id)
-    comments = Comment.objects.filter(post=post)
+    comments = post.comments.all()
     post_count = post.author.posts.count()
     context = {
         'post': post,
