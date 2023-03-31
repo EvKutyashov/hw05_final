@@ -6,7 +6,7 @@
       {% block content %}
         {% include 'posts/includes/switcher.html' %}
         {% load cache %}
-        {% cache 20 index_page %}
+        {% cache 20 index_page page_obj.number %}
         <h1>{{group.description}}</h1>
         <article>
         {% for post in page_obj %}

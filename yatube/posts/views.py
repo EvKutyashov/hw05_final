@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import Post, Group, User, Follow
+from posts.models import Follow, Group, Post, User
 from .forms import PostForm, CommentForm
 from django.contrib.auth.decorators import login_required
 from posts.utils import get_page
@@ -21,9 +21,9 @@ def group_posts(request, slug):
     posts = group.posts.all()
     page_obj = get_page(request, posts)
     context = {
+        'page_obj': page_obj,
         'group': group,
         'posts': posts,
-        'page_obj': page_obj,
     }
     return render(request, template, context)
 
